@@ -4,7 +4,13 @@ import static org.testng.Assert.ARRAY_MISMATCH_TEMPLATE;
 
 import java.awt.Desktop.Action;
 import java.awt.event.WindowEvent;
+
 import java.net.URI;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -16,6 +22,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
@@ -28,9 +35,17 @@ public class MyTestCasses {
 WebDriver driver = new EdgeDriver();
 String theURL= "https://codenboxautomationlab.com/practice/";
 Random rand=  new Random();
+Connection con;
+Statement stat;
+ResultSet rs;
+String firstName;
+String lastName;
+String phone;
+String customerName;
 
 @BeforeTest
-	public void MySetup() {
+	public void MySetup()throws SQLException {
+	con = DriverManager.getConnection("jdbc:mysql://localhost:3306/classicmodels","root","123456");
 	driver.get(theURL);
 	driver.manage().window().maximize();
 }
@@ -147,7 +162,7 @@ public void RadioButton() throws InterruptedException {
 	}
 	
 	@Test(priority = 11,enabled = true)
-	public void Calender() {
+	public void Calender() throws InterruptedException, SQLException {
 		
 		driver.findElement(By.linkText("Booking Calendar")).click();
 		
@@ -157,7 +172,24 @@ public void RadioButton() throws InterruptedException {
 
 		driver.switchTo().window(allTabs.get(1));
 		
-		driver.findElement(By.id("name1")).sendKeys("abd");
+		Thread.sleep(3000);
+		int randId = rand.nextInt(144,147);
+		String queryToRead = "select * from customers where customerNumber ="+randId;
+		stat = con.createStatement();
+		rs = stat.executeQuery(queryToRead);
+		while (rs.next()) {
+			firstName = rs.getString("contactFirstName");
+			lastName = rs.getString("contactLastName");
+			phone = rs.getString("phone");
+			customerName = rs.getString("customerName");
+		}
+		int randNumber= rand.nextInt(1000);
+		driver.findElement(By.id("name1")).sendKeys(firstName);
+		driver.findElement(By.id("secondname1")).sendKeys(lastName);
+		driver.findElement(By.id("email1")).sendKeys(firstName+lastName+randNumber+"@gmail.com");
+		driver.findElement(By.id("phone1")).sendKeys(phone);
+		driver.findElement(By.id("details1")).sendKeys(customerName);
+
 	}
 	
 }
