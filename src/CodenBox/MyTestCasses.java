@@ -1,18 +1,23 @@
 package CodenBox;
 
+import static org.testng.Assert.ARRAY_MISMATCH_TEMPLATE;
+
 import java.awt.event.WindowEvent;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap.KeySetView;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.support.ui.Select;
+import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -57,17 +62,41 @@ public void RadioButton() throws InterruptedException {
 
 	}
 	
-	@Test (priority = 4,invocationCount = 1,enabled = true)
-	public void cart () throws InterruptedException {
-		WebElement box = driver.findElement(By.id("checkbox-example"));
-		List<WebElement> ch = box.findElements(By.tagName("input"));
-		for (int i = 0;i<ch.size();i++) {
-			ch.get(i).click();
+	@Test (priority = 4,enabled = false)
+	public void CheckBox  () throws InterruptedException {
+		WebElement checkBox = driver.findElement(By.id("checkbox-example"));
+		List<WebElement> Option = checkBox.findElements(By.tagName("input"));
+		for (int i = 0;i<Option.size();i++) {
+			Option.get(i).click();
 		}
 			
-			
-		}
+	}
 		
+	@Test (priority = 5,enabled = false)
+	public void SwitchWindow  () {
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		js.executeScript("window.scrollTo(0,700)");
+		
+		WebElement openWindow = driver.findElement(By.id("opentab"));
+		openWindow.click();
+		Set<String> handles = driver.getWindowHandles();
+		List<String> allTabs = new ArrayList<>(handles);
+		driver.switchTo().window(allTabs.get(1));
+		driver.switchTo().window(allTabs.get(0));
+	}
+	
+	@Test (priority = 6,enabled = true)
+	public void SwitchToAlert  () throws InterruptedException {
+		WebElement yourName = driver.findElement(By.id("name"));
+		yourName.sendKeys("abd");
+		driver.findElement(By.id("alertbtn")).click();
+		boolean actual = driver.switchTo().alert().getText().contains("abd");
+		Assert.assertEquals(actual, true);
+		driver.switchTo().alert().accept();
+		
+	}
+	
+	
 }
 
 
