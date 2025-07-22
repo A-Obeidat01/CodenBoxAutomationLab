@@ -5,7 +5,7 @@
     <classes>
       <class name="CodenBox.MyTestCasses">
         <methods>
-          <include name="FirstTist"/>
+          <include name="Calender"/>
           <include name="MySetup"/>
         </methods>
       </class> <!-- CodenBox.MyTestCasses -->
